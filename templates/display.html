@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <title>Display Data</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('button').click(function () {
+                var phoneNumbers = [];
+                $('td.cellphone').each(function () {
+                    phoneNumbers.push($(this).text());
+                });
+
+                // Make an AJAX request to trigger the SMS functionality
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "send_sms" %}',  // Updated URL
+                    data: {
+                        'phone_numbers': phoneNumbers,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        // Handle the success response here
+                        console.log('SMS messages sent successfully!');
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error response here
+                        console.error('Error sending SMS messages:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Customer Details</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Cellphone</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for cell in cellphones %}
+        <tr>
+            <td class="cellphone">{{ cell }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<button type="button">Send text to all</button>
+</body>
+</html>
