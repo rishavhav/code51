@@ -7,4 +7,5 @@ urlpatterns = [
     path("send-sms/", views.send_sms, name="send_sms"),
     path('sms-response/', views.sms_response, name='sms_response'),
     path('senders/', views.display_senders, name='display_senders'),
+    path('delete_senders/', views.delete_senders, name='delete_senders'),
 ]

@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-^9hzr_=322sbr@98)ubfsk6+(f8n_g8y7_=e#c&3*s&b5=xn!r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'a574-68-180-86-21.ngrok-free.app']
 
 
 # Application definition
@@ -124,7 +124,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TWILIO_ACCOUNT_SID = "AC60b772b1a66661536b9d8df4d1ef51e5"
-TWILIO_AUTH_TOKEN = "b7078f0fe4f18f35810d9c11b61abb43"
+TWILIO_AUTH_TOKEN = "11c977aa5c08dd34ead7c5f42ea4c85a"
 TWILIO_PHONE_NUMBER = "+18772372570"
 
 

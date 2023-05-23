@@ -1,14 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Message Senders</title>
-</head>
-<body>
-<h1>Message Senders</h1>
-<ul>
-    {% for sender in senders %}
-        <li>{{ sender.phone_number }}</li>
-    {% endfor %}
-</ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}
+    Message Senders
+{% endblock %}
+
+{% block content %}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333; /* Update the color of the table header text */
+        }
+    </style>
+
+    <h1>Message Senders</h1>
+    <form id="deleteForm" method="POST" action="{% url 'delete_senders' %}">
+        {% csrf_token %}
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Phone Number</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sender in senders %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="sender_ids" value="{{ sender.id }}">
+                    </td>
+                    <td>{{ sender.phone_number }}</td>
+                    <td>{{ sender.message }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Delete</button>
+    </form>
+{% endblock %}
