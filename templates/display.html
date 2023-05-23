@@ -1,7 +1,32 @@
-<!doctype html>
-<html>
-<head>
-    <title>Display Data</title>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Display Data
+{% endblock %}
+
+{% block page_title %}
+    <h1>Customer Details</h1>
+{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+        <tr>
+            <th>Cellphone</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for cell in cellphones %}
+            <tr>
+                <td class="cellphone">{{ cell }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="button-container">
+        <button type="button">Send text to all</button>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -31,23 +56,4 @@
             });
         });
     </script>
-</head>
-<body>
-<h1>Customer Details</h1>
-<table>
-    <thead>
-    <tr>
-        <th>Cellphone</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for cell in cellphones %}
-        <tr>
-            <td class="cellphone">{{ cell }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-<button type="button">Send text to all</button>
-</body>
-</html>
+{% endblock %}

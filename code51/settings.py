@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "base51",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -122,6 +123,8 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-TWILIO_ACCOUNT_SID = "AC68de005ec7bb275b602bba62c21fca4c"
-TWILIO_AUTH_TOKEN = "a753350b05e6385af2074f8fd9e754de"
-TWILIO_PHONE_NUMBER = "+18667069409"
+TWILIO_ACCOUNT_SID = "AC60b772b1a66661536b9d8df4d1ef51e5"
+TWILIO_AUTH_TOKEN = "b7078f0fe4f18f35810d9c11b61abb43"
+TWILIO_PHONE_NUMBER = "+18772372570"
+
+

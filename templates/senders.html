@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message Senders</title>
+</head>
+<body>
+<h1>Message Senders</h1>
+<ul>
+    {% for sender in senders %}
+        <li>{{ sender.phone_number }}</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
