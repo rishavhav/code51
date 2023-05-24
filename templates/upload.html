@@ -5,14 +5,15 @@
     Upload Page
 {% endblock %}
 
-{% block page_title %}
-    <h1>Upload Excel</h1>
-{% endblock %}
+
 
 {% block content %}
-    <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="file" accept=".xlsx, .xls">
-        <input type="submit" value="Upload">
-    </form>
+    <div class="upload-container">
+    <h1>Upload File</h1>
+        <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" accept=".xlsx, .xls">
+            <input type="submit" value="Upload">
+        </form>
+    </div>
 {% endblock %}

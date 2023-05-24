@@ -17,9 +17,9 @@
         </tr>
         </thead>
         <tbody>
-        {% for cell in cellphones %}
+        {% for number in phone_numbers %}
             <tr>
-                <td class="cellphone">{{ cell }}</td>
+                <td class="cellphone">{{ number }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -41,7 +41,7 @@
                     type: 'POST',
                     url: '{% url "send_sms" %}',  // Updated URL
                     data: {
-                        'phone_numbers': phoneNumbers,
+                        'phone_numbers[]': phoneNumbers,
                         'csrfmiddlewaretoken': '{{ csrf_token }}'
                     },
                     success: function (response) {

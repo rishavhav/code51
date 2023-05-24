@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path("", views.upload_form, name="upload_form"),
-    path("upload", views.upload_file, name="upload_file"),
+    path("upload/", views.upload_file, name="upload_file"),
     path("send-sms/", views.send_sms, name="send_sms"),
     path('sms-response/', views.sms_response, name='sms_response'),
     path('senders/', views.display_senders, name='display_senders'),

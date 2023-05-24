@@ -6,9 +6,19 @@
     <link rel="stylesheet" type="text/css" href="{% static 'base51/styles.css' %}">
 </head>
 <body>
-{% block page_title %}
-{% endblock %}
-{% block content %}
-{% endblock %}
+<div class="header-panel">
+    <nav>
+        <ul class="nav-links">
+            <li><a href="{% url 'upload_form' %}">Upload</a></li>
+            <li><a href="{% url 'display_senders' %}">Message Senders</a></li>
+        </ul>
+    </nav>
+</div>
+<div class="content">
+    <div class="page-container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
 </body>
 </html>

@@ -22,8 +22,7 @@
             color: #333; /* Update the color of the table header text */
         }
     </style>
-
-    <h1>Message Senders</h1>
+    <h1>Total Messages: {{ message_counter }}</h1>
     <form id="deleteForm" method="POST" action="{% url 'delete_senders' %}">
         {% csrf_token %}
         <table>
