@@ -8,7 +8,32 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.contrib import messages
 import pandas as pd
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import CustomUser
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('upload_file')
+        else:
+            # Invalid credentials, show an error message
+            messages.error(request, 'Invalid username or password.')
+
+    return render(request, 'login.html')
+
+@login_required(login_url='login')
 def delete_messages(request):
     if request.method == 'POST':
         selected_messages = request.POST.getlist('selected_messages')
@@ -18,6 +43,7 @@ def delete_messages(request):
 
     return redirect('display_senders')
 
+@login_required(login_url='login')
 def delete_senders(request):
     if request.method == 'POST':
         sender_ids = request.POST.getlist('sender_ids')
@@ -27,26 +53,7 @@ def delete_senders(request):
         messages.success(request, 'Senders deleted successfully.')
     return redirect('display_senders')
 
-@csrf_exempt
-def sms_response(request):
-    if request.method == 'POST':
-        phone_number = request.POST.get('From')
-        message = request.POST.get('Body')
-
-        # Create and save the SMSResponse object
-        response = SMSResponse(phone_number=phone_number, message=message)
-        response.save()
-
-        # Create or update the MessageSender object
-        sender, created = MessageSender.objects.get_or_create(phone_number=phone_number)
-        sender.sms_response = response  # Associate the SMSResponse with the MessageSender
-        sender.save()
-
-        return HttpResponse(status=200)
-    else:
-        return HttpResponseNotAllowed(['POST'])
-
-
+@login_required(login_url='login')
 def display_senders(request):
     # Get the current count from the session, or set it to 0 if it doesn't exist
     count = request.session.get('message_counter', 0)
@@ -55,8 +62,7 @@ def display_senders(request):
     context = {'senders': senders, 'message_counter': count}
     return render(request, 'senders.html', context)
 
-
-
+@login_required(login_url='login')
 def send_sms(request):
     if request.method == "POST":
         phone_numbers = request.POST.getlist("phone_numbers[]")
@@ -76,7 +82,7 @@ def send_sms(request):
 
     return render(request, "display_numbers.html")
 
-
+@login_required(login_url='login')
 def upload_file(request):
     if request.method == "POST":
         file = request.FILES.get("file")
@@ -95,6 +101,26 @@ def upload_file(request):
 
     return render(request, "upload.html", {"error": "Invalid request method"})
 
-
+@login_required(login_url='login')
 def upload_form(request):
     return render(request, "upload.html")
+
+@login_required(login_url='login')
+@csrf_exempt
+def sms_response(request):
+    if request.method == 'POST':
+        phone_number = request.POST.get('From')
+        message = request.POST.get('Body')
+
+        # Create and save the SMSResponse object
+        response = SMSResponse(phone_number=phone_number, message=message)
+        response.save()
+
+        # Create or update the MessageSender object
+        sender, created = MessageSender.objects.get_or_create(phone_number=phone_number)
+        sender.sms_response = response  # Associate the SMSResponse with the MessageSender
+        sender.save()
+
+        return HttpResponse(status=200)
+    else:
+        return HttpResponseNotAllowed(['POST'])

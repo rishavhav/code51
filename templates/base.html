@@ -9,8 +9,15 @@
 <div class="header-panel">
     <nav>
         <ul class="nav-links">
+            {% if user.is_authenticated %}
             <li><a href="{% url 'upload_form' %}">Upload</a></li>
+            {% endif %}
+            {% if user.is_authenticated %}
             <li><a href="{% url 'display_senders' %}">Message Senders</a></li>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Sign Out</a></li>
+            {% endif %}
         </ul>
     </nav>
 </div>
