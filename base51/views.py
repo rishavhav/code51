@@ -18,51 +18,57 @@ from django.contrib.auth import logout
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect("login")
+
+
 def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('upload_file')
+            return redirect("upload_file")
         else:
             # Invalid credentials, show an error message
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, "Invalid username or password.")
 
-    return render(request, 'login.html')
+    return render(request, "login.html")
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def delete_messages(request):
-    if request.method == 'POST':
-        selected_messages = request.POST.getlist('selected_messages')
+    if request.method == "POST":
+        selected_messages = request.POST.getlist("selected_messages")
 
         # Delete the selected messages from the database
         SMSResponse.objects.filter(id__in=selected_messages).delete()
 
-    return redirect('display_senders')
+    return redirect("display_senders")
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def delete_senders(request):
-    if request.method == 'POST':
-        sender_ids = request.POST.getlist('sender_ids')
+    if request.method == "POST":
+        sender_ids = request.POST.getlist("sender_ids")
         # Logic for deleting senders from the database using the sender_ids list
         # ...
 
-        messages.success(request, 'Senders deleted successfully.')
-    return redirect('display_senders')
+        messages.success(request, "Senders deleted successfully.")
+    return redirect("display_senders")
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def display_senders(request):
     # Get the current count from the session, or set it to 0 if it doesn't exist
-    count = request.session.get('message_counter', 0)
+    count = request.session.get("message_counter", 0)
 
     senders = SMSResponse.objects.all()
-    context = {'senders': senders, 'message_counter': count}
-    return render(request, 'senders.html', context)
+    context = {"senders": senders, "message_counter": count}
+    return render(request, "senders.html", context)
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def send_sms(request):
     if request.method == "POST":
         phone_numbers = request.POST.getlist("phone_numbers[]")
@@ -82,7 +88,8 @@ def send_sms(request):
 
     return render(request, "display_numbers.html")
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def upload_file(request):
     if request.method == "POST":
         file = request.FILES.get("file")
@@ -93,7 +100,7 @@ def upload_file(request):
         df = pd.read_excel(file)
 
         # Extract the 'PHONE' column values
-        phone_numbers = df['PHONE'].tolist()
+        phone_numbers = df["PHONE"].tolist()
 
         # Save the phone numbers to the database or any other processing
 
@@ -101,16 +108,18 @@ def upload_file(request):
 
     return render(request, "upload.html", {"error": "Invalid request method"})
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 def upload_form(request):
     return render(request, "upload.html")
 
-@login_required(login_url='login')
+
+@login_required(login_url="login")
 @csrf_exempt
 def sms_response(request):
-    if request.method == 'POST':
-        phone_number = request.POST.get('From')
-        message = request.POST.get('Body')
+    if request.method == "POST":
+        phone_number = request.POST.get("From")
+        message = request.POST.get("Body")
 
         # Create and save the SMSResponse object
         response = SMSResponse(phone_number=phone_number, message=message)
@@ -118,9 +127,11 @@ def sms_response(request):
 
         # Create or update the MessageSender object
         sender, created = MessageSender.objects.get_or_create(phone_number=phone_number)
-        sender.sms_response = response  # Associate the SMSResponse with the MessageSender
+        sender.sms_response = (
+            response  # Associate the SMSResponse with the MessageSender
+        )
         sender.save()
 
         return HttpResponse(status=200)
     else:
-        return HttpResponseNotAllowed(['POST'])
+        return HttpResponseNotAllowed(["POST"])
