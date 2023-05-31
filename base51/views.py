@@ -9,7 +9,8 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from twilio.rest import Client
 from django.contrib import messages
-
+from django.shortcuts import redirect
+from django.utils import timezone
 
 def send_message(request):
     if request.method == "POST":
@@ -78,8 +79,9 @@ def delete_senders(request):
 def display_senders(request):
     # Get all SMSResponse objects from the database
     sms_responses = SMSResponse.objects.all()
+    print(sms_responses)
 
-    # Create an empty dictionary to store the messages for each number
+    # Create a dictionary to store the messages for each number
     senders_dict = {}
 
     # Iterate over each SMSResponse object
@@ -93,12 +95,28 @@ def display_senders(request):
         else:
             senders_dict[phone_number] = [message]
 
-    context = {"senders_dict": senders_dict, "message_counter": len(senders_dict)}
-    #print(senders_dict.values())
+    # Create a list of dictionaries to store the sender details
+    senders = []
+    for phone_number, messages in senders_dict.items():
+        sender = {
+            'phone_number': phone_number,
+            'messages': messages
+        }
+        senders.append(sender)
+    print(senders)
+    context = {"senders": senders, "message_counter": len(senders)}
     return render(request, "senders.html", context)
 
+@login_required(login_url="login")
+def mark_as_seen(request):
+    if request.method == "POST":
+        sender_ids = request.POST.getlist("sender_ids")
+        sender_ids = [id for id in sender_ids if id]  # Filter out empty strings
 
+        # Update the seen status for selected senders
+        SMSResponse.objects.filter(pk__in=sender_ids).update(seen=True, timestamp=timezone.now())
 
+    return redirect("display_senders")
 @login_required(login_url="login")
 def send_sms(request):
     if request.method == "POST":
@@ -117,7 +135,11 @@ def send_sms(request):
 
         return render(request, "success.html")
 
-    return render(request, "display_numbers.html")
+    # Retrieve and display the list of senders
+    senders = MessageSender.objects.filter(seen=False)
+    context = {"senders": senders}
+    return render(request, "display_numbers.html", context)
+
 
 
 @login_required(login_url="login")

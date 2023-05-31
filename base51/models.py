@@ -54,9 +54,10 @@ class SMSResponse(models.Model):
     phone_number = models.CharField(max_length=20)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.phone_number} - {self.timestamp}"
+        return f"{self.phone_number} - {self.timestamp} - {self.seen}"
 
 
 class MessageSender(models.Model):
@@ -65,6 +66,9 @@ class MessageSender(models.Model):
         SMSResponse, on_delete=models.SET_NULL, null=True, blank=True
     )
     date_received = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
 
     def __str__(self):
         return self.phone_number
+
+

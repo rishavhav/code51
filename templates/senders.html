@@ -23,20 +23,36 @@
         }
     </style>
     <h1>Total Messages: {{ message_counter }}</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>Phone Number</th>
-            <th>Messages</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for phone_number, messages in senders_dict.items %}
+    <form id="seenForm" method="POST" action="{% url 'mark_as_seen' %}">
+        {% csrf_token %}
+        <table>
+            <thead>
             <tr>
-                <td>{{ phone_number }}</td>
-                <td>{{ messages|join:', ' }}</td>
+                <th></th>
+                <th>Phone Number</th>
+                <th>Messages</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for sender in senders %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="sender_ids" value="{{ sender.pk }}">
+                    </td>
+                    <td>{{ sender.phone_number }}</td>
+                    <td>
+                        {% for message in sender.messages %}
+                            {% if forloop.first %}
+                                {{ message }}
+                            {% else %}
+                                , {{ message }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Seen</button>
+    </form>
 {% endblock %}
