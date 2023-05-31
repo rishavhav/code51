@@ -1,17 +1,8 @@
-from django.conf import settings
-from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
-from twilio.rest import Client
 from base51.models import SMSResponse, MessageSender
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.contrib import messages
 import pandas as pd
 from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .models import CustomUser
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.conf import settings
