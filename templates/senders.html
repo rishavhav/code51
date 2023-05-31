@@ -23,28 +23,20 @@
         }
     </style>
     <h1>Total Messages: {{ message_counter }}</h1>
-    <form id="deleteForm" method="POST" action="{% url 'delete_senders' %}">
-        {% csrf_token %}
-        <table>
-            <thead>
+    <table>
+        <thead>
+        <tr>
+            <th>Phone Number</th>
+            <th>Messages</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for phone_number, messages in senders_dict.items %}
             <tr>
-                <th></th>
-                <th>Phone Number</th>
-                <th>Message</th>
+                <td>{{ phone_number }}</td>
+                <td>{{ messages|join:', ' }}</td>
             </tr>
-            </thead>
-            <tbody>
-            {% for sender in senders %}
-                <tr>
-                    <td>
-                        <input type="checkbox" name="sender_ids" value="{{ sender.id }}">
-                    </td>
-                    <td>{{ sender.phone_number }}</td>
-                    <td>{{ sender.message }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <button type="submit">Delete</button>
-    </form>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

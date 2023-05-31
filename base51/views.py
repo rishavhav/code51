@@ -76,12 +76,27 @@ def delete_senders(request):
 
 @login_required(login_url="login")
 def display_senders(request):
-    # Get the current count from the session, or set it to 0 if it doesn't exist
-    count = request.session.get("message_counter", 0)
+    # Get all SMSResponse objects from the database
+    sms_responses = SMSResponse.objects.all()
 
-    senders = SMSResponse.objects.all()
-    context = {"senders": senders, "message_counter": count}
+    # Create an empty dictionary to store the messages for each number
+    senders_dict = {}
+
+    # Iterate over each SMSResponse object
+    for response in sms_responses:
+        phone_number = response.phone_number
+        message = response.message
+
+        # Check if the phone number already exists in the dictionary
+        if phone_number in senders_dict:
+            senders_dict[phone_number].append(message)
+        else:
+            senders_dict[phone_number] = [message]
+
+    context = {"senders_dict": senders_dict, "message_counter": len(senders_dict)}
+    #print(senders_dict.values())
     return render(request, "senders.html", context)
+
 
 
 @login_required(login_url="login")
