@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from twilio.rest import Client
 from django.contrib import messages
 
+
 def send_message(request):
     if request.method == "POST":
         phone_number = request.POST.get("phone_number")
@@ -29,6 +30,7 @@ def send_message(request):
         return redirect("send_message")
 
     return render(request, "send_message.html")
+
 
 def logout_view(request):
     logout(request)
