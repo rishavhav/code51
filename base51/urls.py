@@ -10,4 +10,5 @@ urlpatterns = [
     path("delete_senders/", views.delete_senders, name="delete_senders"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
+    path("send-message/", views.send_message, name="send_message"),
 ]

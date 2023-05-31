@@ -10,13 +10,12 @@
     <nav>
         <ul class="nav-links">
             {% if user.is_authenticated %}
-            <li><a href="{% url 'upload_form' %}">Upload</a></li>
-            {% endif %}
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'display_senders' %}">Message Senders</a></li>
-            {% endif %}
-            {% if user.is_authenticated %}
+                <li><a href="{% url 'upload_form' %}">Upload</a></li>
+                <li><a href="{% url 'display_senders' %}">Message Senders</a></li>
+                <li><a href="{% url 'send_message' %}">Send Message</a></li>
                 <li><a href="{% url 'logout' %}">Sign Out</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
             {% endif %}
         </ul>
     </nav>

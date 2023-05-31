@@ -14,7 +14,30 @@ from django.shortcuts import render, redirect
 from .models import CustomUser
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.conf import settings
+from django.shortcuts import render, redirect
+from twilio.rest import Client
+from django.contrib import messages
 
+def send_message(request):
+    if request.method == "POST":
+        phone_number = request.POST.get("phone_number")
+        message = request.POST.get("message")
+
+        # Initialize the Twilio client
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+
+        # Send SMS using Twilio
+        message = client.messages.create(
+            body=message,
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=phone_number,
+        )
+
+        messages.success(request, "Message sent successfully.")
+        return redirect("send_message")
+
+    return render(request, "send_message.html")
 
 def logout_view(request):
     logout(request)

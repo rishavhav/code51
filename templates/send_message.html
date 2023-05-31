@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Send Message{% endblock %}
+
+{% block content %}
+    <h1>Send Message</h1>
+    <form method="POST" action="{% url 'send_message' %}">
+        {% csrf_token %}
+        <div>
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" required>
+        </div>
+        <div>
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" cols="50" required></textarea>
+        </div>
+        <div>
+            <button type="submit">Send Message</button>
+        </div>
+    </form>
+{% endblock %}
