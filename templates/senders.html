@@ -21,8 +21,17 @@
             background-color: #f2f2f2;
             color: #333; /* Update the color of the table header text */
         }
+
+        .message-counters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
     </style>
-    <h1>Total Messages: {{ message_counter }}</h1>
+    <div class="message-counters">
+        <h1>Total Messages: {{ total_messages }}</h1>
+        <h1>Total Unseen Messages: {{ message_counter }}</h1>
+    </div>
     <form id="seenForm" method="POST" action="{% url 'mark_as_seen' %}">
         {% csrf_token %}
         <table>
@@ -37,7 +46,7 @@
             {% for sender in senders %}
                 <tr>
                     <td>
-                        <input type="checkbox" name="sender_ids" value="{{ sender.pk }}">
+                        <input type="checkbox" name="sender_ids" value="{{ sender.phone_number }}">
                     </td>
                     <td>{{ sender.phone_number }}</td>
                     <td>

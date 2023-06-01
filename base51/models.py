@@ -51,13 +51,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class SMSResponse(models.Model):
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, unique=True)  # Make phone_number field unique
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     seen = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.phone_number} - {self.timestamp} - {self.seen}"
+
 
 
 class MessageSender(models.Model):

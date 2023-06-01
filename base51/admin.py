@@ -1,12 +1,9 @@
 from django.contrib import admin
-from .models import SMSResponse, MessageSender
-
+from .models import SMSResponse
 
 @admin.register(SMSResponse)
 class SMSResponseAdmin(admin.ModelAdmin):
-    list_display = ("phone_number", "message", "timestamp")
+    list_display = ("phone_number", "message", "timestamp", "seen")
+    list_filter = ("seen",)
+    search_fields = ("phone_number", "message")
 
-
-@admin.register(MessageSender)
-class MessageSenderAdmin(admin.ModelAdmin):
-    list_display = ("phone_number", "date_received")

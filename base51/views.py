@@ -74,28 +74,17 @@ def delete_senders(request):
         messages.success(request, "Senders deleted successfully.")
     return redirect("display_senders")
 
-
-@login_required(login_url="login")
-def display_senders(request):
-    # Get all SMSResponse objects from the database
-    sms_responses = SMSResponse.objects.all()
-    print(sms_responses)
-
-    # Create a dictionary to store the messages for each number
+def distinct_total_numbers(total_messages):
     senders_dict = {}
-
-    # Iterate over each SMSResponse object
-    for response in sms_responses:
+    for response in total_messages:
         phone_number = response.phone_number
         message = response.message
 
-        # Check if the phone number already exists in the dictionary
         if phone_number in senders_dict:
             senders_dict[phone_number].append(message)
         else:
             senders_dict[phone_number] = [message]
 
-    # Create a list of dictionaries to store the sender details
     senders = []
     for phone_number, messages in senders_dict.items():
         sender = {
@@ -103,18 +92,44 @@ def display_senders(request):
             'messages': messages
         }
         senders.append(sender)
-    print(senders)
-    context = {"senders": senders, "message_counter": len(senders)}
+    return len(senders)
+
+@login_required(login_url="login")
+def display_senders(request):
+    total_messages = distinct_total_numbers(SMSResponse.objects.all())
+    sms_responses = SMSResponse.objects.filter(seen=False)
+
+    senders_dict = {}
+
+    for response in sms_responses:
+        phone_number = response.phone_number
+        message = response.message
+
+        if phone_number in senders_dict:
+            senders_dict[phone_number].append(message)
+        else:
+            senders_dict[phone_number] = [message]
+
+    senders = []
+    for phone_number, messages in senders_dict.items():
+        sender = {
+            'phone_number': phone_number,
+            'messages': messages
+        }
+        senders.append(sender)
+
+    context = {"senders": senders, "message_counter": len(senders), "total_messages": total_messages}
     return render(request, "senders.html", context)
+
 
 @login_required(login_url="login")
 def mark_as_seen(request):
     if request.method == "POST":
-        sender_ids = request.POST.getlist("sender_ids")
-        sender_ids = [id for id in sender_ids if id]  # Filter out empty strings
+        sender_phone_numbers = request.POST.getlist("sender_ids")
+        sender_phone_numbers = [phone_number for phone_number in sender_phone_numbers if phone_number]  # Filter out empty strings
 
         # Update the seen status for selected senders
-        SMSResponse.objects.filter(pk__in=sender_ids).update(seen=True, timestamp=timezone.now())
+        SMSResponse.objects.filter(phone_number__in=sender_phone_numbers).update(seen=True, timestamp=timezone.now())
 
     return redirect("display_senders")
 @login_required(login_url="login")
