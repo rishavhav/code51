@@ -5,15 +5,14 @@
     Upload Page
 {% endblock %}
 
-
-
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'base51/styles.css' %}">
     <div class="upload-container">
-    <h1>Upload File</h1>
+        <h1>Upload File</h1>
         <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="file" accept=".xlsx, .xls">
-            <input type="submit" value="Upload">
+            <button type="submit">Upload</button>
         </form>
     </div>
 {% endblock %}

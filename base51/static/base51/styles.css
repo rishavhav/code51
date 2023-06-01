@@ -1,14 +1,23 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
-    margin: 0;
-    padding: 0;
+    background-image: url("images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover; /* or background-size: contain; */
+    background-position: center;
 }
 
 .header-panel {
     background-color: #333;
     padding: 20px;
 }
+
 
 .upload-container {
     text-align: center;
@@ -45,6 +54,7 @@ body {
     padding: 20px;
     margin: 20px;
     border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .content {
@@ -102,7 +112,8 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     text-align: left;
 }
@@ -121,7 +132,7 @@ tr:hover {
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: #1E90FF;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -142,3 +153,4 @@ button:hover {
     text-align: center;
     margin-top: 20px;
 }
+
