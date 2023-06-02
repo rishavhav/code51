@@ -1,6 +1,9 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Send Message{% endblock %}
+{% block title %}
+    Send Message
+{% endblock %}
 
 {% block content %}
     <h1>Send Message</h1>
@@ -18,4 +21,76 @@
             <button type="submit">Send Message</button>
         </div>
     </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (event) {
+                event.preventDefault();
+
+                var phoneNumber = $('#phone_number').val();
+                var message = $('#message').val();
+
+                // Make an AJAX request to send the message
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: {
+                        'phone_number': phoneNumber,
+                        'message': message,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        // Check if the response indicates success or failure
+                        if (response.success) {
+                            // Show the success modal
+                            $('#successModal').modal('show');
+                        } else {
+                            // Show the failure message
+                            $('#failureModal').modal('show');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Show the failure message
+                        $('#failureModal').modal('show');
+                        console.error('Error sending the message:', error);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Message Sent</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="failureModal" tabindex="-1" role="dialog" aria-labelledby="failureModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="failureModalLabel">Message Send Failed</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 {% endblock %}

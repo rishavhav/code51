@@ -11,27 +11,25 @@ from twilio.rest import Client
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils import timezone
-
+from django.http import JsonResponse
 
 def send_message(request):
     if request.method == "POST":
         phone_number = request.POST.get("phone_number")
         message = request.POST.get("message")
 
-        # Initialize the Twilio client
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
-        # Send SMS using Twilio
         message = client.messages.create(
             body=message,
             from_=settings.TWILIO_PHONE_NUMBER,
             to=phone_number,
         )
 
-        messages.success(request, "Message sent successfully.")
-        return redirect("send_message")
+        return JsonResponse({"success": True})
 
     return render(request, "send_message.html")
+
 
 
 def logout_view(request):
@@ -138,24 +136,36 @@ def mark_as_seen(request):
 
     return redirect("display_senders")
 
-
 @login_required(login_url="login")
 def send_sms(request):
     if request.method == "POST":
         phone_numbers = request.POST.getlist("phone_numbers[]")
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        success_count = 0
 
         for phone_number in phone_numbers:
-            message = client.messages.create(
-                body="hey I am Rishav Soam. wanted to tell you that i am looking for you!",
-                from_=settings.TWILIO_PHONE_NUMBER,
-                to=phone_number,
-            )
+            try:
+                message = client.messages.create(
+                    body="hey I am Rishav Soam. wanted to tell you that I am looking for you!",
+                    from_=settings.TWILIO_PHONE_NUMBER,
+                    to=phone_number,
+                )
+                success_count += 1
+            except Exception as e:
+                # Handle any exceptions that occur during message sending
+                messages.error(request, f"Error sending SMS to {phone_number}: {str(e)}")
 
-        return render(request, "success.html")
+        if success_count > 0:
+            messages.success(request, f"SMS messages sent successfully to {success_count} recipient(s).")
+        else:
+            messages.warning(request, "Failed to send SMS messages.")
+
+        return redirect("upload_file")
+
     senders = MessageSender.objects.filter(seen=False)
     context = {"senders": senders}
-    return render(request, "display_numbers.html", context)
+    return render(request, "display.html", context)
+
 
 @login_required(login_url="login")
 def upload_file(request):
@@ -176,7 +186,7 @@ def upload_form(request):
     return render(request, "upload.html")
 
 
-@login_required(login_url="login")
+
 @csrf_exempt
 def sms_response(request):
     if request.method == "POST":
