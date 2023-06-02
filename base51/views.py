@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.http import JsonResponse
 
+
 def send_message(request):
     if request.method == "POST":
         phone_number = request.POST.get("phone_number")
@@ -29,7 +30,6 @@ def send_message(request):
         return JsonResponse({"success": True})
 
     return render(request, "send_message.html")
-
 
 
 def logout_view(request):
@@ -129,12 +129,12 @@ def mark_as_seen(request):
             phone_number for phone_number in sender_phone_numbers if phone_number
         ]
 
-
         SMSResponse.objects.filter(phone_number__in=sender_phone_numbers).update(
             seen=True, timestamp=timezone.now()
         )
 
     return redirect("display_senders")
+
 
 @login_required(login_url="login")
 def send_sms(request):
@@ -153,10 +153,15 @@ def send_sms(request):
                 success_count += 1
             except Exception as e:
                 # Handle any exceptions that occur during message sending
-                messages.error(request, f"Error sending SMS to {phone_number}: {str(e)}")
+                messages.error(
+                    request, f"Error sending SMS to {phone_number}: {str(e)}"
+                )
 
         if success_count > 0:
-            messages.success(request, f"SMS messages sent successfully to {success_count} recipient(s).")
+            messages.success(
+                request,
+                f"SMS messages sent successfully to {success_count} recipient(s).",
+            )
         else:
             messages.warning(request, "Failed to send SMS messages.")
 
@@ -186,7 +191,6 @@ def upload_form(request):
     return render(request, "upload.html")
 
 
-
 @csrf_exempt
 def sms_response(request):
     if request.method == "POST":
@@ -195,9 +199,7 @@ def sms_response(request):
         response = SMSResponse(phone_number=phone_number, message=message)
         response.save()
         sender, created = MessageSender.objects.get_or_create(phone_number=phone_number)
-        sender.sms_response = (
-            response
-        )
+        sender.sms_response = response
         sender.save()
 
         return HttpResponse(status=200)

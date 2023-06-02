@@ -13,11 +13,11 @@
             <label for="phone_number">Phone Number:</label>
             <input type="text" id="phone_number" name="phone_number" required>
         </div>
-        <div>
+        <div class="message-container">
             <label for="message">Message:</label>
             <textarea id="message" name="message" rows="4" cols="50" required></textarea>
         </div>
-        <div>
+        <div class="button-container">
             <button type="submit">Send Message</button>
         </div>
     </form>
@@ -91,6 +91,28 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .message-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .message-container label {
+            margin-right: 10px;
+            text-align: right;
+        }
+
+        .message-container textarea {
+            width: 400px; /* Adjust the width as needed */
+        }
+
+        .message-container {
+            margin-top: 10px;
+        }
+    </style>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 {% endblock %}
