@@ -11,5 +11,5 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("send-message/", views.send_message, name="send_message"),
-    path('mark_as_seen/', views.mark_as_seen, name='mark_as_seen'),
+    path("mark_as_seen/", views.mark_as_seen, name="mark_as_seen"),
 ]

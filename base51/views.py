@@ -6,11 +6,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from twilio.rest import Client
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils import timezone
+
 
 def send_message(request):
     if request.method == "POST":
@@ -74,6 +75,7 @@ def delete_senders(request):
         messages.success(request, "Senders deleted successfully.")
     return redirect("display_senders")
 
+
 def distinct_total_numbers(total_messages):
     senders_dict = {}
     for response in total_messages:
@@ -87,12 +89,10 @@ def distinct_total_numbers(total_messages):
 
     senders = []
     for phone_number, messages in senders_dict.items():
-        sender = {
-            'phone_number': phone_number,
-            'messages': messages
-        }
+        sender = {"phone_number": phone_number, "messages": messages}
         senders.append(sender)
     return len(senders)
+
 
 @login_required(login_url="login")
 def display_senders(request):
@@ -112,13 +112,14 @@ def display_senders(request):
 
     senders = []
     for phone_number, messages in senders_dict.items():
-        sender = {
-            'phone_number': phone_number,
-            'messages': messages
-        }
+        sender = {"phone_number": phone_number, "messages": messages}
         senders.append(sender)
 
-    context = {"senders": senders, "message_counter": len(senders), "total_messages": total_messages}
+    context = {
+        "senders": senders,
+        "message_counter": len(senders),
+        "total_messages": total_messages,
+    }
     return render(request, "senders.html", context)
 
 
@@ -126,22 +127,25 @@ def display_senders(request):
 def mark_as_seen(request):
     if request.method == "POST":
         sender_phone_numbers = request.POST.getlist("sender_ids")
-        sender_phone_numbers = [phone_number for phone_number in sender_phone_numbers if phone_number]  # Filter out empty strings
+        sender_phone_numbers = [
+            phone_number for phone_number in sender_phone_numbers if phone_number
+        ]
 
-        # Update the seen status for selected senders
-        SMSResponse.objects.filter(phone_number__in=sender_phone_numbers).update(seen=True, timestamp=timezone.now())
+
+        SMSResponse.objects.filter(phone_number__in=sender_phone_numbers).update(
+            seen=True, timestamp=timezone.now()
+        )
 
     return redirect("display_senders")
+
+
 @login_required(login_url="login")
 def send_sms(request):
     if request.method == "POST":
         phone_numbers = request.POST.getlist("phone_numbers[]")
-
-        # Initialize the Twilio client
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
         for phone_number in phone_numbers:
-            # Send SMS using Twilio
             message = client.messages.create(
                 body="hey I am Rishav Soam. wanted to tell you that i am looking for you!",
                 from_=settings.TWILIO_PHONE_NUMBER,
@@ -149,13 +153,9 @@ def send_sms(request):
             )
 
         return render(request, "success.html")
-
-    # Retrieve and display the list of senders
     senders = MessageSender.objects.filter(seen=False)
     context = {"senders": senders}
     return render(request, "display_numbers.html", context)
-
-
 
 @login_required(login_url="login")
 def upload_file(request):
@@ -163,15 +163,9 @@ def upload_file(request):
         file = request.FILES.get("file")
         if not file:
             return render(request, "upload.html", {"error": "No file uploaded"})
-
-        # Read the uploaded file using pandas
         df = pd.read_excel(file)
 
-        # Extract the 'PHONE' column values
         phone_numbers = df["PHONE"].tolist()
-
-        # Save the phone numbers to the database or any other processing
-
         return render(request, "display.html", {"phone_numbers": phone_numbers})
 
     return render(request, "upload.html", {"error": "Invalid request method"})
@@ -188,15 +182,11 @@ def sms_response(request):
     if request.method == "POST":
         phone_number = request.POST.get("From")
         message = request.POST.get("Body")
-
-        # Create and save the SMSResponse object
         response = SMSResponse(phone_number=phone_number, message=message)
         response.save()
-
-        # Create or update the MessageSender object
         sender, created = MessageSender.objects.get_or_create(phone_number=phone_number)
         sender.sms_response = (
-            response  # Associate the SMSResponse with the MessageSender
+            response
         )
         sender.save()
 
